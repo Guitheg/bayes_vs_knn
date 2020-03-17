@@ -34,7 +34,7 @@ class GaussianBayes(object):
         for i in range(n_classes):
             for k in range(n_obs):
                 sigma_inv = np.linalg.inv(self.sigma[i])
-                log_sigma_det = 1/2*np.log(np.linalg.det(self.sigma[i]))
+                log_sigma_det = 1/2*np.log(abs(np.linalg.det(self.sigma[i])))
 
                 n_res[k][i] = - 1/2 * np.dot((X[k] - self.mu[i]).T, np.dot(sigma_inv, (X[k]-self.mu[i])))- f_pi - log_sigma_det + np.log(self.priors[i])
 

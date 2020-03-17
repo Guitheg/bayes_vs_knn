@@ -12,30 +12,67 @@ MAIN = os.path.abspath(os.path.dirname(__file__))
 DATA = join(MAIN, "Data")
 
 def main():
-    path = [join(DATA, "data2.csv"), join(DATA, "data3.csv"), join(DATA, "data12.csv")]
+    #path = [join(DATA, "data2.csv"), join(DATA, "data3.csv"), join(DATA, "data12.csv")]
+    path = ["data2.csv","data3.csv","data12.csv"]
+    #subplot init
     t = 321
+    #Parcours de tout les fichiers tests.
+    """
     for p in path:
-        data, labels = load_dataset(p)
-        test_size = 10
+        data, labels = load_dataset(join(DATA,p))
+        train_size = 20
         score_baye = []
         score_k_voisin = []
         x = []
-        for i in range(0, 85, 5):
-            s_bayes, cfx_bayes, s_knn, cfx_knn = baye_voisin(data, labels, test_size+i)
-            score_baye += [s_bayes]
-            score_k_voisin += [s_knn]
-            x += [test_size + i]
+        for i in range(0, 80, 2):
+            s_bayes, cfx_bayes, s_knn, cfx_knn = baye_voisin(data, labels, train_size+i)
+            score_baye += [1-s_bayes]
+            score_k_voisin += [1-s_knn]
+            x += [train_size + i]
+            #print(cfx_bayes)
+            #print(cfx_knn)
         plt.subplot(t)
         plt.plot(x, score_baye, c='red')
+        plt.title(p)
+        plt.xlabel("Pourcentage du jeu d'apprentissage")
+        plt.ylabel("Taux d'echec")
         t += 1
         plt.subplot(t)
         plt.plot(x, score_k_voisin, c='blue')
+        plt.title(p)
+        plt.xlabel("Pourcentage du jeu d'apprentissage")
+        plt.ylabel("Taux d'echec")
+        t += 1
+    plt.show()
+    """
+    
+    #affichage des matrices de confusions avec 80% d'apprentissage et 20% de test
+    for p in path:
+        data, labels = load_dataset(join(DATA,p))
+        train_size = 10
+        s_bayes, cfx_bayes, s_knn, cfx_knn = baye_voisin(data, labels, train_size)
+        #print(cfx_bayes)
+        #print(cfx_knn)
+        plt.subplot(t)
+        #plt.matshow(cfx_bayes,fignum=0)
+        plt.imshow(cfx_bayes)
+
+        plt.title(p)
+        #plt.xlabel("Pourcentage du jeu d'apprentissage")
+        #plt.ylabel("Taux d'echec")
+        t += 1
+        plt.subplot(t)
+        #plt.matshow(cfx_knn,fignum=0)
+        plt.imshow(cfx_knn,)
+        plt.title(p)
+        #plt.xlabel("Pourcentage du jeu d'apprentissage")
+        #plt.ylabel("Taux d'echec")
         t += 1
     plt.show()
 
 def baye_voisin(data, labels, ts):
-    train_data, test_data, train_labels, test_labels = train_test_split(data, labels, test_size = ts / 100, random_state = 42)
-
+    train_data, test_data, train_labels, test_labels = train_test_split(data, labels, train_size = ts / 100, random_state = 42)
+    print("test taille:",len(test_data)," train test:",len(train_data)," test size: ",ts)
     # GAUSSIENNE
     g = GaussianBayes()
     g.fit(train_data, train_labels)
